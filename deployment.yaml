@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: addcontracy_showlist-deployment
+spec:
+  selector:
+    matchLabels:
+      app: addcontracy_showlist
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: addcontracy_showlist
+    spec:
+      containers:
+        - name: user-microservice
+          image: elmachkouriimane/addcontracy_showlist:latest  # Utilisez l'URL complète de votre image Docker Hub
+          ports:
+            - containerPort: 8081
+          env:   # Setting Environmental Variables
+            - name: DB_HOST   # Setting Database host address from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: host
+            - name: DB_NAME  # Setting Database name from configMap
+              valueFrom:
+                configMapKeyRef:
+                  name: db-config
+                  key: dbName
+            - name: DB_USERNAME  # Setting Database username from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: username
+            - name: DB_PASSWORD # Setting Database password from Secret
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-secrets
+                  key: password
+            - name: MANAGEMENT_ENDPOINT_HEALTH_PROBES_ENABLED
+              value: "true"
+            - name: MANAGEMENT_HEALTH_READINESSTATE_ENABLED
+              value: "true"
+            - name: MANAGEMENT_HEALTH_LIVENESSSTATE_ENABLED
+              value: "true"
+            #            - name: SFG_BREWERY_BEER-SERVICE-HOST
+            #              value: http://user-service:8080
+            - name: SERVER_SHUTDOWN
+              value: "graceful"
+          lifecycle:
+            preStop:
+              exec:
+                command: ["sh", "-c", "sleep 10"]
+---
+apiVersion: v1 # Kubernetes API version
+kind: Service # Kubernetes resource kind we are creating
+metadata: # Metadata of the resource kind we are creating
+  labels:
+    app: addcontracy_showlist
+  name: addcontracy_showlist-svc
+spec:
+  selector:
+    app: addcontracy_showlist
+    type: ClusterIP
+  ports:
+    - protocol: TCP
+      port: 8081 # The port that the service is running on in the cluster
+      targetPort: 8081 # The port exposed by the ser
+status:
+  loadBalancer: {}

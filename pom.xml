@@ -96,6 +96,6 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>addcontracy_showlist</finalName>
 	</build>
-
 </project>
