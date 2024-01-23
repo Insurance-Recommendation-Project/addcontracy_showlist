@@ -1,39 +1,39 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: addcontracy_showlist_deployment
+  name: addcontracy-showlist-deployment
 spec:
   selector:
     matchLabels:
-      app: addcontracy_showlist
+      app: addcontracy-showlist
   replicas: 1
   template:
     metadata:
       labels:
-        app: addcontracy_showlist
+        app: addcontracy-showlist
     spec:
       containers:
-        - name: addcontracy_showlist
-          image: elmachkouriimane/addcontracy_showlist:latest  # Utilisez l'URL complète de votre image Docker Hub
+        - name: addcontracy-showlist
+          image: elmachkouriimane/addcontracy_showlist:latest
           ports:
             - containerPort: 8081
-          env:   # Setting Environmental Variables
-            - name: DB_HOST   # Setting Database host address from configMap
+          env:
+            - name: DB_HOST
               valueFrom:
                 configMapKeyRef:
                   name: db-config
                   key: host
-            - name: DB_NAME  # Setting Database name from configMap
+            - name: DB_NAME
               valueFrom:
                 configMapKeyRef:
                   name: db-config
                   key: dbName
-            - name: DB_USERNAME  # Setting Database username from Secret
+            - name: DB_USERNAME
               valueFrom:
                 secretKeyRef:
                   name: mysql-secrets
                   key: username
-            - name: DB_PASSWORD # Setting Database password from Secret
+            - name: DB_PASSWORD
               valueFrom:
                 secretKeyRef:
                   name: mysql-secrets
@@ -44,28 +44,27 @@ spec:
               value: "true"
             - name: MANAGEMENT_HEALTH_LIVENESSSTATE_ENABLED
               value: "true"
-            #            - name: SFG_BREWERY_BEER-SERVICE-HOST
-            #              value: http://user-service:8080
             - name: SERVER_SHUTDOWN
               value: "graceful"
+
           lifecycle:
             preStop:
               exec:
                 command: ["sh", "-c", "sleep 10"]
 ---
-apiVersion: v1 # Kubernetes API version
-kind: Service # Kubernetes resource kind we are creating
-metadata: # Metadata of the resource kind we are creating
+apiVersion: v1
+kind: Service
+metadata:
   labels:
-    app: addcontracy_showlist
-  name: addcontracy_showlist_svc
+    app: addcontracy-showlist
+  name: addcontracy-showlist-svc
 spec:
   selector:
-    app: addcontracy_showlist
-    type: ClusterIP
+    app: addcontracy-showlist
+  type: ClusterIP
   ports:
     - protocol: TCP
-      port: 8081 # The port that the service is running on in the cluster
-      targetPort: 8081 # The port exposed by the ser
+      port: 8081
+      targetPort: 8081
 status:
   loadBalancer: {}
