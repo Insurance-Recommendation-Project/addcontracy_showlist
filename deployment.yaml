@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: addcontracy_showlist-deployment
+  name: addcontracy_showlist_deployment
 spec:
   selector:
     matchLabels:
@@ -13,7 +13,7 @@ spec:
         app: addcontracy_showlist
     spec:
       containers:
-        - name: user-microservice
+        - name: addcontracy_showlist
           image: elmachkouriimane/addcontracy_showlist:latest  # Utilisez l'URL complète de votre image Docker Hub
           ports:
             - containerPort: 8081
@@ -58,7 +58,7 @@ kind: Service # Kubernetes resource kind we are creating
 metadata: # Metadata of the resource kind we are creating
   labels:
     app: addcontracy_showlist
-  name: addcontracy_showlist-svc
+  name: addcontracy_showlist_svc
 spec:
   selector:
     app: addcontracy_showlist
