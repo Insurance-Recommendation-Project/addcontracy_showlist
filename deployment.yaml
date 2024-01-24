@@ -61,7 +61,7 @@ metadata:
 spec:
   selector:
     app: addcontracy-showlist
-  type: ClusterIP
+  type: NodePort
   ports:
     - protocol: TCP
       port: 8084

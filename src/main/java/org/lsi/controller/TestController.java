@@ -66,5 +66,11 @@ public class TestController {
 		List<Contract> contracts = testServ.getAll();
 		return new ResponseEntity<>(contracts, HttpStatus.OK);
 	}
+
+	@GetMapping("/hello")
+	public String test()
+	{
+		return "Hello world " ;
+	}
 }
 
