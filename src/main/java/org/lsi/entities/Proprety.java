@@ -31,7 +31,9 @@ public class Proprety {
         this.descc = desc;
         this.owner = owner;
     }
-
+    public Proprety(String descc) {
+        this.descc = descc;
+    }
     public Long getId() {
         return id;
     }

@@ -1,22 +1,31 @@
 package org.lsi.controller;
 
 
+import org.apache.catalina.User;
 import org.lsi.entities.Contract;
 import org.lsi.entities.ERole;
+import org.lsi.entities.Proprety;
 import org.lsi.entities.Role;
 import org.lsi.repositories.TokenRepository;
 import org.lsi.repositories.UserRepository;
 import org.lsi.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.RestTemplate;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 
 @RestController
 @RequestMapping("/api/contrats")
+@CrossOrigin(origins = "http://localhost:4200")
 public class TestController {
 
 	@Autowired
@@ -27,7 +36,7 @@ public class TestController {
 
 	@Autowired
 	private UserRepository userRepository;
-
+/*
 	@PostMapping("/addContract")
 	public ResponseEntity<?> addContract(@RequestHeader("Authorization") String token, @RequestBody Contract contract) {
 		// Your authentication logic here (check user roles, etc.)
@@ -60,11 +69,123 @@ public class TestController {
 	}
 	}
 
+*/
+
+
+	@PostMapping("/addContract")
+	public ResponseEntity<?> addContract(@RequestBody Contract contract) {
+		try {
+			// Assuming any request reaching this endpoint is considered authorized
+			Contract savedContract = testServ.addLand(
+					contract.getBuyer(),
+					contract.getSeller(),
+					contract.getCost(),
+					contract.getDesc(),
+					contract.getProp(),
+					contract.getDate());
+
+			return new ResponseEntity<>(savedContract, HttpStatus.OK);
+		} catch (Exception e) {
+			// Handle the exception, log it, or take appropriate action
+			e.printStackTrace(); // This is just an example, replace with proper logging
+			return new ResponseEntity<>("Error occurred", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
+	}
+
+
+
+
+
+
+@Autowired
+public	RestTemplate  restTemplate;
+
+
+
+
+
+
+
+
 	@GetMapping("/listContracts")
 	public ResponseEntity<List<Contract>> listContracts() {
-		// Example: Get all contracts from the database
+		//String url="http://localhost:8083/api/auth/signin";
+      // Object[] objects=restTemplate.getForObject(url,Object[].class);
+
+		//: Get all contracts from the database
 		List<Contract> contracts = testServ.getAll();
-		return new ResponseEntity<>(contracts, HttpStatus.OK);
+
+	//	List<Contract> contracts = testServ.getAllByUsername(id);
+				 return new ResponseEntity<>(contracts, HttpStatus.OK);
 	}
+
+/*
+	@GetMapping("/listContract")
+	public ResponseEntity<List<Object>> listContract() {
+		String externalApiUrl = "http://localhost:8083/api/auth/user";
+		Object[] externalContracts = restTemplate.getForObject(externalApiUrl, Object[].class);
+
+
+	 //abase
+	//	List<Contract> localContracts = testServ.getAll();
+
+		// Combine external and local contracts into a single list
+		List<Object> allContracts = Arrays.asList(externalContracts);
+	//	allContracts.addAll(localContracts);
+
+		// Return the combined list in the ResponseEntity
+		return new ResponseEntity<>(allContracts, HttpStatus.OK);
+	}
+	*/
+
+	@GetMapping("/listContract")
+	public ResponseEntity<List<Object>> listContract() {
+		String externalApiUrl = "http://localhost:8083/api/auth/user";
+		// Use parameterized ResponseEntity to indicate a list of objects
+		ResponseEntity<List<Object>> responseEntity = restTemplate.exchange(
+				externalApiUrl,
+				HttpMethod.GET,
+				null,
+				new ParameterizedTypeReference<List<Object>>() {});
+
+		List<Object> externalContracts = responseEntity.getBody();
+
+		// If you have localContracts, add them here as well
+		// List<Contract> localContracts = testServ.getAll();
+		// externalContracts.addAll(localContracts);
+
+		return new ResponseEntity<>(externalContracts, HttpStatus.OK);
+	}
+
+	@GetMapping("/listContrac")
+	public ResponseEntity<List<Object>> listContrac() {
+		// Call the external API to get contracts
+		String externalApiUrl = "http://localhost:8083/api/auth/user";
+		ResponseEntity<List<Object>> externalApiResponse = restTemplate.exchange(
+				externalApiUrl,
+				HttpMethod.GET,
+				null,
+				new ParameterizedTypeReference<List<Object>>() {});
+
+		List<Object> externalContracts = externalApiResponse.getBody();
+
+		// Get contracts from the database
+		List<Contract> localContracts = testServ.getAll();
+
+		// Combine the external and local contracts into a single list
+		List<Object> allContracts = new ArrayList<>();
+		allContracts.addAll(externalContracts);
+		allContracts.addAll(localContracts);
+
+		return new ResponseEntity<>(allContracts, HttpStatus.OK);
+	}
+
+
+
+
+
+
+
+
 }
 

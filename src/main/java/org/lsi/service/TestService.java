@@ -13,6 +13,7 @@ public interface TestService {
 	//BigInteger PropretyCount() throws Exception;
 	//BigInteger getNumberLands() throws Exception;
 	List<Contract> getAll();
+	// List<Contract> getAllByUsername(String id);
 	Contract addLand(User buyer, User seller, BigInteger cost, String desc, Proprety prop, String date) throws Exception;
 //	List<Contract> getAllOfOwner(String id);
 }
