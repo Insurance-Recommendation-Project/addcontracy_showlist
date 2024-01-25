@@ -25,15 +25,20 @@ public class TestServiceImpl implements TestService {
         return contRep.findAll();
     }
 
-   /* @Override
+  /* // @Override
     public List<Contract> getAllOfOwner(Long id) {
         // Your logic to get contracts based on owner id
         // ...
 
         // Return an appropriate value based on your logic
-        return contRep.findByBuyerIdOrSellerId(id.toString(), id.toString());
-    }*/
+        return contRep.findByBuyer_IdOrSeller_Id(id.toString(), id.toString());
+    }
+*/
+ /* @Override
+  public List<Contract> getAllByUsername(String id) {
+      return contRep.findByUsername(id);
 
+  }*/
     @Override
     public Contract addLand(User buyer, User seller, BigInteger cost, String desc, Proprety prop, String date) {
         // Remove unnecessary blockchain-related logic

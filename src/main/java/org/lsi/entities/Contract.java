@@ -17,12 +17,12 @@ public class Contract{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
 
-	@ManyToOne
-	@JoinColumn(name = "buyer_id")
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "buyer_user_id")
 	private User buyer;
 
-	@ManyToOne
-	@JoinColumn(name = "seller_id")
+	@ManyToOne(cascade = CascadeType.ALL)
+	@JoinColumn(name = "seller_user_id")
 	private User seller;
 
 	private BigInteger cost;
